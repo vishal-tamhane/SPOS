@@ -4,74 +4,91 @@ public class Optimal {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int frames, hit = 0, fault = 0, ref_len;
-        int buffer[];
-        int reference[];
-        int mem_layout[][];
-
         System.out.print("Enter the Number of Frames: ");
-        frames = Integer.parseInt(br.readLine());
+        int frames = Integer.parseInt(br.readLine());
 
         System.out.print("Enter the Length of Reference String: ");
-        ref_len = Integer.parseInt(br.readLine());
+        int ref_len = Integer.parseInt(br.readLine());
 
-        reference = new int[ref_len];
-        mem_layout = new int[ref_len][frames];
-        buffer = new int[frames];
+        int[] reference = new int[ref_len];
+        int[] buffer = new int[frames];        
+        int[][] mem_layout = new int[frames][ref_len];
 
-        for (int j = 0; j < frames; j++)
-            buffer[j] = -1;
+        for (int i = 0; i < frames; i++) buffer[i] = -1;
 
-        System.out.println("Please enter the reference string: ");
-        for (int i = 0; i < ref_len; i++) {
+        System.out.println("Enter the reference string:");
+        for (int i = 0; i < ref_len; i++)
             reference[i] = Integer.parseInt(br.readLine());
-            int search = -1;
+
+        int hits = 0, faults = 0;
+
+        for (int i = 0; i < ref_len; i++) {
+            int page = reference[i];
+            boolean pageHit = false;
+
             for (int j = 0; j < frames; j++) {
-                if (buffer[j] == reference[i]) {
-                    search = j;
-                    hit++;
+                if (buffer[j] == page) {
+                    hits++;
+                    pageHit = true;
                     break;
                 }
             }
 
-            if (search == -1) {
-                int pos = -1, farthest = i;
+            if (!pageHit) {
+                int pos = -1;
+                int farthest = -1;
+
                 for (int j = 0; j < frames; j++) {
-                    int next_use = -1;
-                    for (int k = i + 1; k < ref_len; k++) {
-                        if (buffer[j] == reference[k]) {
-                            next_use = k;
-                            break;
-                        }
-                    }
-                    if (next_use == -1) {
+                    if (buffer[j] == -1) {
                         pos = j;
                         break;
                     }
-                    if (next_use > farthest) {
-                        farthest = next_use;
+
+                    int nextUse = -1;
+                    for (int k = i + 1; k < ref_len; k++) {
+                        if (buffer[j] == reference[k]) {
+                            nextUse = k;
+                            break;
+                        }
+                    }
+
+                    if (nextUse == -1) {
+                        pos = j;
+                        break;
+                    }
+
+                    if (nextUse > farthest) {
+                        farthest = nextUse;
                         pos = j;
                     }
                 }
-                buffer[pos] = reference[i];
-                fault++;
+
+                buffer[pos] = page;
+                faults++;
             }
 
-            for (int j = 0; j < frames; j++) {
-                mem_layout[i][j] = buffer[j];
-            }
+            for (int j = 0; j < frames; j++)
+                mem_layout[j][i] = buffer[j];
         }
 
-        System.out.println("\nMemory Layout:");
+        System.out.println("\nMemory Layout Table:");
+        System.out.print("Frame\\Step ");
+        for (int i = 0; i < ref_len; i++) System.out.printf("%3d ", reference[i]);
+        System.out.println();
+
         for (int i = 0; i < frames; i++) {
+            System.out.print("Frame " + (i + 1) + "   ");
             for (int j = 0; j < ref_len; j++) {
-                System.out.printf("%3d ", mem_layout[j][i]);
+                if (mem_layout[i][j] != -1)
+                    System.out.printf("%3d ", mem_layout[i][j]);
+                else
+                    System.out.print(" -  ");
             }
             System.out.println();
         }
 
-        System.out.println("\nThe number of Hits: " + hit);
-        System.out.println("Hit Ratio: " + (float) hit / ref_len);
-        System.out.println("The number of Faults: " + fault);
+        System.out.println("\nTotal Hits: " + hits);
+        System.out.println("Hit Ratio: " + (float) hits / ref_len);
+        System.out.println("Total Faults: " + faults);
     }
 }
