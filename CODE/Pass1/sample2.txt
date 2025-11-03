@@ -1,0 +1,23 @@
+start 300
+read a
+read b
+calc: mover ax a
+add ax b
+movem sum ='5'
+ltorg
+sub ax ='3'
+comp ax ='10'
+bc lt calc
+movem res ='8'
+ltorg
+origin calc
+mult ax sum
+div ax b
+store: movem temp ='6'
+ds a 01
+ds b 01
+ds res 01
+dc sum 04
+ds temp 01
+final equ store
+end

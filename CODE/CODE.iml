@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/Bankers-Algorithm" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/DLL" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Macro1" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Macro2" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Mutex" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Pass1" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Pass2" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cpu-scheduling-algorithm" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
