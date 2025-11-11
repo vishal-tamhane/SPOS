@@ -47,20 +47,32 @@ public class Pass2 {
         boolean symbol_error = false, undef_mnemonic = false;
         System.out.println("\n****************OUTPUT FILE****************\n\n");
 
-        lab:
         while ((line = br2.readLine()) != null) {
-            String[] token_list = line.split("\\s+",5);
+            line = line.trim();
+            if (line.isEmpty()) {
+                continue; // skip blank lines
+            }
+            
+            String[] token_list = line.split("\\s+");
             symbol_error = false;
             undef_mnemonic = false;
-            
-            labl:
+            StringBuilder outputLine = new StringBuilder();
+            boolean hasContent = false;
+            boolean skipLine = false;
+
             for (String token : token_list) {
                 if (token.isEmpty()) {
-                    continue; 
+                    continue;
                 }
 
-                if (token.matches("[0-9]+")) { 
-                    System.out.print("\n" + token);
+                if (token.matches("[0-9]+")) {
+                    
+                    if (!hasContent && !skipLine) {
+                        outputLine.append(token);
+                        hasContent = true;
+                    } else if (!skipLine) {
+                        outputLine.append("\t").append(token);
+                    }
                 } else if (token.startsWith("(") && token.endsWith(")")) {
                     String content = token.substring(1, token.length() - 1);
                     
@@ -70,48 +82,65 @@ public class Pass2 {
                         String letters = parts[0].trim();
                         int num = Integer.parseInt(parts[1].trim());
                         
-switch (letters.toUpperCase()) {
-    case "S":
-        if (num > 0 && num <= total_symb && symb_table[num - 1].addr != 0) {
-            System.out.print("\t" + symb_table[num - 1].addr);
-        } else {
-            System.out.print("\t---");
-            symbol_error = true;
-        }
-        break;
-    case "L":
-        if (num > 0 && num <= total_ltr) {
-            System.out.print("\t" + literal_table[num - 1].addr);
-        } else {
-             System.out.print("\t---");
-             symbol_error = true;
-        }
-        break;
-    case "AD":
-        System.out.print("\n");
-        continue labl;
-    case "DL":
-        switch (num) {
-            case 1:
-                System.out.print("\n");
-                continue labl;
-            case 2:
-                System.out.print("\t 00 \t 00");
-                break;
-        }
-        break;
-    case "C":
-        System.out.print(String.format("\t%03d", num));
-        break;
-    default: 
-        System.out.print(String.format("\t%03d", num));
-        break;
+                        switch (letters.toUpperCase()) {
+                            case "S":
+                                if (num > 0 && num <= total_symb && symb_table[num - 1].addr != 0) {
+                                    outputLine.append("\t").append(symb_table[num - 1].addr);
+                                    hasContent = true;
+                                } else {
+                                    outputLine.append("\t---");
+                                    symbol_error = true;
+                                    hasContent = true;
+                                }
+                                break;
+                            case "L":
+                                if (num > 0 && num <= total_ltr) {
+                                    outputLine.append("\t").append(literal_table[num - 1].addr);
+                                    hasContent = true;
+                                } else {
+                                    outputLine.append("\t---");
+                                    symbol_error = true;
+                                    hasContent = true;
+                                }
+                                break;
+                            case "AD":
+                                // Assembler directive - skip this entire line
+                                skipLine = true;
+                                break;
+                            case "DL":
+                                switch (num) {
+                                    case 1:
+                                        // DC - skip
+                                        break;
+                                    case 2:
+                                        outputLine.append("\t 00 \t 00");
+                                        hasContent = true;
+                                        break;
+                                }
+                                break;
+                            case "IS":
+                            case "C":
+                            case "RG":
+                                if (!skipLine) {
+                                    outputLine.append(String.format("\t%03d", num));
+                                    hasContent = true;
+                                }
+                                break;
+                            default: 
+                                if (!skipLine) {
+                                    outputLine.append(String.format("\t%03d", num));
+                                    hasContent = true;
+                                }
+                                break;
+                        }
+                    }
+                }
             }
-        
+            // Print the complete line only if it has content and shouldn't be skipped
+            if (hasContent && !skipLine) {
+                System.out.println(outputLine.toString());
             }
         }
-    }
-}
         
         System.out.println(); 
         

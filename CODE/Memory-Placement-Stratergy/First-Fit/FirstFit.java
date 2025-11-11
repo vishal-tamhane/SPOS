@@ -3,12 +3,12 @@ import java.util.Scanner;
 public class FirstFit {
 
     public static void firstFit(int blockSize[], int m, int processSize[], int n, int allocation[]) {
-        for (int i = 0; i < n; i++) {
+        for(int i = 0; i < n; i++) {
             allocation[i] = -1;
         }
-        for (int i = 0; i < n; i++) {
+        for(int i =0; i <n;i++) {
 
-            for (int j = 0; j < m; j++) {
+            for(int j = 0; j < m; j++) {
                 if (blockSize[j] >= processSize[i]) {
                     allocation[i] = j;
                     blockSize[j] -= processSize[i];
@@ -17,7 +17,7 @@ public class FirstFit {
             }
         }
     }
-
+    
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         System.out.print("Enter number of memory blocks: ");

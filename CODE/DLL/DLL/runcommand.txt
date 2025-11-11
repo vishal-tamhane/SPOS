@@ -1,0 +1,12 @@
+java "-Djava.library.path=." ArithmeticJNI
+
+
+
+
+
+
+javac --release 24 ArithmeticJNI.java
+
+
+
+java "-Djava.library.path=." ArithmeticJNI
